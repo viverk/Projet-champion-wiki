@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="fr_FR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CHAMPION WIKI</title>
+    <script src="fonctions.js"></script>
+    <script src="JQuery 3.5.1.js"></script>
+    <style>
+        .sugg {
+            background-color: yellow;
+            color: black;
+        }
+
+        body {
+            background-color: black;
+            background-image: url("https://www.transparenttextures.com/patterns/stardust.png");
+            animation: stars 30s linear infinite;
+            color: yellow;
+        }
+
+        @keyframes stars {
+            0% {
+                background-position: 0 0;
+            }
+
+            100% {
+                /* the size of the background image */
+                background-position: 798px -798px;
+            }
+        }
+    </style>
+</head>
+<script>
+    var lesChamps = [];
+    window.onload = function aide() {
+
+
+        var callBackGetSuccessBis = function (donneesBis) {
+            console.log("donnees api BIS = ", Object.keys(donneesBis.data));
+            console.log("test taille : " + Object.keys(donneesBis.data).length)
+            for (let i = 0; i < Object.keys(donneesBis.data).length; i++) {
+                lesChamps.push(Object.keys(donneesBis.data)[i])
+            }
+            //console.log(lesChamps)
+
+            const saisie = document.getElementById("nomChampion");
+            saisie.addEventListener('keyup', function () {
+                const input = saisie.value;
+
+                const result = lesChamps.filter(item => item.toLocaleLowerCase().includes(input.toLocaleLowerCase()));
+
+                let suggestion = '';
+
+                if (input != '') {
+                    result.forEach(resultItem => suggestion += `
+                    <div class="sugg" onmouseover="this.style.backgroundColor='aquamarine'" onmouseout="this.style.backgroundColor='yellow'" onclick=" document.getElementById('nomChampion').value = '${resultItem}'; getAPI(); "> <img src="http://ddragon.leagueoflegends.com/cdn/${getVersion()}/img/champion/${resultItem}.png" width="40" height="40"</img> ${resultItem} </div>
+                    `
+                    )
+                }
+                document.getElementById("suggestions").innerHTML = suggestion;
+            })
+
+        }
+
+
+        var urlBis = "http://ddragon.leagueoflegends.com/cdn/" +getVersion()+ "/data/fr_FR/champion.json";
+        $.get(urlBis, callBackGetSuccessBis).done(function () {
+            //alert("dedans") 
+
+        })
+
+
+    }
+
+</script>
+
+<body style="font-family: sans-serif;">
+    <h1 style="text-align: center;">Champions wiki</h1>
+    <input type="search" value="Aatrox" id="nomChampion" class="nomChampion" />
+    <input type="button" value="rechercher" onclick="getAPI(); getVersion();" />
+    <p id="suggestions"></p>
+    <p id="zone"></p>
+
+</body>
+
+
+
+
+
+</html>
